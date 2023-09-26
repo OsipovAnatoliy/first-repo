@@ -1,0 +1,57 @@
+import java.util.*;
+
+public class PhoneBook {
+    private Map<String, List<String>> contacts;
+
+    public PhoneBook() {
+        contacts = new HashMap<>();
+    }
+
+    public void addContact(String name, String phone) {
+        contacts.computeIfAbsent(name, k -> new ArrayList<>()).add(phone);
+    }
+
+    public void removeContact(String name) {
+        contacts.remove(name);
+    }
+
+    public List<String> getPhones(String name) {
+        return contacts.get(name);
+    }
+
+    public void displayContacts() {
+        for (Map.Entry<String, List<String>> entry : contacts.entrySet()) {
+            String name = entry.getKey();
+            List<String> phones = entry.getValue();
+            System.out.println("Name: " + name);
+            System.out.println("Phones: " + phones);
+        }
+    }
+
+    public void sortContactsByNumberOfPhones() {
+        contacts = contacts.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.comparingInt(List::size)))
+                .collect(LinkedHashMap::new, (map, entry) -> map.put(entry.getKey(), entry.getValue()), LinkedHashMap::putAll);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        PhoneBook phoneBook = new PhoneBook();
+
+        phoneBook.addContact("John", "123456789");
+        phoneBook.addContact("John", "987654321");
+        phoneBook.addContact("Alice", "111111111");
+        phoneBook.addContact("Alice", "222222222");
+        phoneBook.addContact("Bob", "555555555");
+        phoneBook.addContact("Bob", "444444444");
+
+        phoneBook.displayContacts(); // Изначальный порядок
+
+        System.out.println("-----");
+
+        phoneBook.sortContactsByNumberOfPhones(); // Сортировка по количеству телефонов
+
+        phoneBook.displayContacts(); // Отсортированный порядок
+    }
+}
