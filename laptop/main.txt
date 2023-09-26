@@ -1,0 +1,81 @@
+import java.util.*;
+
+public class LaptopStore {
+    private Set<Laptop> laptops;
+
+    public LaptopStore() {
+        laptops = new HashSet<>();
+    }
+
+    public void addLaptop(Laptop laptop) {
+        laptops.add(laptop);
+    }
+
+    public void filterLaptops(Map<Integer, Object> filters) {
+        List<Laptop> result = new ArrayList<>();
+        for (Laptop laptop : laptops) {
+            boolean meetsFilter = true;
+            for (Map.Entry<Integer, Object> entry : filters.entrySet()) {
+                int filterKey = entry.getKey();
+                Object filterValue = entry.getValue();
+                switch (filterKey) {
+                    case 1:
+                        int minRam = (int) filterValue;
+                        if (laptop.getRam() < minRam) {
+                            meetsFilter = false;
+                        }
+                        break;
+                    case 2:
+                        int minStorage = (int) filterValue;
+                        if (laptop.getStorage() < minStorage) {
+                            meetsFilter = false;
+                        }
+                        break;
+                    case 3:
+                        String os = (String) filterValue;
+                        if (!laptop.getOs().equalsIgnoreCase(os)) {
+                            meetsFilter = false;
+                        }
+                        break;
+                    case 4:
+                        String color = (String) filterValue;
+                        if (!laptop.getColor().equalsIgnoreCase(color)) {
+                            meetsFilter = false;
+                        }
+                        break;
+                    // Добавьте здесь другие критерии фильтрации, если необходимо
+                }
+                if (!meetsFilter) {
+                    break; // Если ноутбук не удовлетворяет хотя бы одному критерию, нет смысла продолжать проверку
+                }
+            }
+            if (meetsFilter) {
+                result.add(laptop);
+            }
+        }
+
+        for (Laptop laptop : result) {
+            System.out.println(laptop);
+        }
+    }
+
+    public static void main(String[] args) {
+        LaptopStore laptopStore = new LaptopStore();
+
+        // Создаем несколько ноутбуков и добавляем их в магазин
+        Laptop laptop1 = new Laptop("Model 1", 8, 500, "Windows 10", "Silver");
+        Laptop laptop2 = new Laptop("Model 2", 16, 1000, "MacOS", "Space Gray");
+        Laptop laptop3 = new Laptop("Model 3", 4, 256, "Linux", "Black");
+
+        laptopStore.addLaptop(laptop1);
+        laptopStore.addLaptop(laptop2);
+        laptopStore.addLaptop(laptop3);
+
+        // Фильтруем ноутбуки по критериям
+        Map<Integer, Object> filters = new HashMap<>();
+        filters.put(1, 8); // ОЗУ не менее 8 ГБ
+        filters.put(2, 500); // Объем ЖД не менее 500 ГБ
+
+        laptopStore.filterLaptops(filters);
+    }
+}
